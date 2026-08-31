@@ -2,6 +2,7 @@
 
 import { MessageCard } from '@/components/MessageCard';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/components/ui/use-toast';
@@ -9,7 +10,7 @@ import { Message } from '@/model/User';
 import { ApiResponse } from '@/types/ApiResponse';
 import { zodResolver } from '@hookform/resolvers/zod';
 import axios, { AxiosError } from 'axios';
-import { Loader2, RefreshCcw } from 'lucide-react';
+import { Copy, Link as LinkIcon, Loader2, MessageSquare, RefreshCcw, ShieldCheck } from 'lucide-react';
 import { User } from 'next-auth';
 import { useSession } from 'next-auth/react';
 import React, { useCallback, useEffect, useState } from 'react';
@@ -27,7 +28,7 @@ function UserDashboard() {
     setMessages(messages.filter((message) => message._id !== messageId));
   };
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   const form = useForm({
     resolver: zodResolver(AcceptMessageSchema),
@@ -116,8 +117,12 @@ function UserDashboard() {
     }
   };
 
+  if (status === 'loading') {
+    return <DashboardSkeleton />;
+  }
+
   if (!session || !session.user) {
-    return <div></div>;
+    return null;
   }
 
   const { username } = session.user as User;
@@ -134,50 +139,58 @@ function UserDashboard() {
   };
 
   return (
-    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl">
-      <h1 className="text-4xl font-bold mb-4">User Dashboard</h1>
-
-      <div className="mb-4">
-        <h2 className="text-lg font-semibold mb-2">Copy Your Unique Link</h2>{' '}
-        <div className="flex items-center">
-          <input
-            type="text"
-            value={profileUrl}
-            disabled
-            className="input input-bordered w-full p-2 mr-2"
-          />
-          <Button onClick={copyToClipboard}>Copy</Button>
+    <main className="mx-auto w-full max-w-6xl space-y-8 p-4 md:p-8">
+      <section className="flex flex-col justify-between gap-4 sm:flex-row sm:items-end">
+        <div>
+          <p className="text-sm font-medium text-indigo-600">Your workspace</p>
+          <h1 className="mt-1 text-3xl font-bold tracking-tight md:text-4xl">Welcome back, {username}</h1>
+          <p className="mt-2 text-muted-foreground">Manage your anonymous-message board in one place.</p>
         </div>
-      </div>
-
-      <div className="mb-4">
-        <Switch
-          {...register('acceptMessages')}
-          checked={acceptMessages}
-          onCheckedChange={handleSwitchChange}
-          disabled={isSwitchLoading}
-        />
-        <span className="ml-2">
-          Accept Messages: {acceptMessages ? 'On' : 'Off'}
+        <span className="inline-flex w-fit items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-sm font-medium text-emerald-700">
+          <ShieldCheck className="h-4 w-4" />
+          Profile active
         </span>
-      </div>
+      </section>
+
+      <section className="grid gap-4 md:grid-cols-3">
+        <Card>
+          <CardContent className="flex items-center gap-4 p-5">
+            <span className="rounded-lg bg-indigo-100 p-3 text-indigo-700"><LinkIcon className="h-5 w-5" /></span>
+            <div><p className="text-sm text-muted-foreground">Public profile</p><p className="font-semibold">@{username}</p></div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center gap-4 p-5">
+            <span className="rounded-lg bg-sky-100 p-3 text-sky-700"><MessageSquare className="h-5 w-5" /></span>
+            <div><p className="text-sm text-muted-foreground">Messages received</p><p className="font-semibold">{messages.length}</p></div>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardContent className="flex items-center justify-between gap-4 p-5">
+            <div><p className="text-sm text-muted-foreground">Receiving messages</p><p className="font-semibold">{acceptMessages ? 'Enabled' : 'Paused'}</p></div>
+            <Switch
+              {...register('acceptMessages')}
+              checked={acceptMessages}
+              onCheckedChange={handleSwitchChange}
+              disabled={isSwitchLoading}
+              aria-label="Toggle anonymous messages"
+            />
+          </CardContent>
+        </Card>
+      </section>
+
+      <Card>
+        <CardContent className="p-5">
+          <div className="mb-3 flex items-center justify-between"><h2 className="font-semibold">Your shareable link</h2><Button onClick={copyToClipboard} size="sm"><Copy className="mr-2 h-4 w-4" />Copy</Button></div>
+          <input type="text" value={profileUrl} disabled className="w-full rounded-md border bg-muted px-3 py-2 text-sm text-muted-foreground" />
+        </CardContent>
+      </Card>
+
       <Separator />
 
-      <Button
-        className="mt-4"
-        variant="outline"
-        onClick={(e) => {
-          e.preventDefault();
-          fetchMessages(true);
-        }}
-      >
-        {isLoading ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <RefreshCcw className="h-4 w-4" />
-        )}
-      </Button>
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <section>
+        <div className="mb-4 flex items-center justify-between"><div><h2 className="text-xl font-bold">Inbox</h2><p className="text-sm text-muted-foreground">Your latest anonymous messages.</p></div><Button aria-label="Refresh inbox" onClick={() => fetchMessages(true)} size="icon" title="Refresh inbox" variant="outline">{isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <RefreshCcw className="h-4 w-4" />}</Button></div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {messages.length > 0 ? (
           messages.map((message, index) => (
             <MessageCard
@@ -187,11 +200,16 @@ function UserDashboard() {
             />
           ))
         ) : (
-          <p>No messages to display.</p>
+          <Card className="md:col-span-2"><CardContent className="py-12 text-center text-muted-foreground">No messages yet. Share your public link to start receiving feedback.</CardContent></Card>
         )}
       </div>
-    </div>
+      </section>
+    </main>
   );
+}
+
+function DashboardSkeleton() {
+  return <main className="mx-auto w-full max-w-6xl space-y-8 p-4 md:p-8"><div className="space-y-3"><div className="h-4 w-28 animate-pulse rounded bg-muted" /><div className="h-10 w-72 animate-pulse rounded bg-muted" /></div><div className="grid gap-4 md:grid-cols-3">{[1, 2, 3].map((item) => <div className="h-28 animate-pulse rounded-lg bg-muted" key={item} />)}</div><div className="h-32 animate-pulse rounded-lg bg-muted" /><div className="grid gap-4 md:grid-cols-2">{[1, 2].map((item) => <div className="h-40 animate-pulse rounded-lg bg-muted" key={item} />)}</div></main>;
 }
 
 export default UserDashboard;

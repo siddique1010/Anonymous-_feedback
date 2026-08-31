@@ -24,6 +24,7 @@ export interface User extends Document {
   verifyCode: string;
   verifyCodeExpiry: Date; 
   isVerified: boolean;
+  needsUsernameSetup: boolean;
   isAcceptingMessages: boolean;
   messages: Message[];
 }
@@ -40,7 +41,7 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     type: String,
     required: [true, 'Email is required'],
     unique: true,
-    match: [/.+\@.+\..+/, 'Please use a valid email address'],
+    match: [/.+\@.+\..+/, 'Please use a valid email address'],    // email use regexr.com 
   },
   password: {
     type: String,
@@ -55,6 +56,10 @@ const UserSchema: Schema<User> = new mongoose.Schema({
     required: [true, 'Verify Code Expiry is required'],
   },
   isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  needsUsernameSetup: {
     type: Boolean,
     default: false,
   },

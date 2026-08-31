@@ -94,6 +94,24 @@ export default function SignInForm() {
             <Button className='w-full' type="submit">Sign In</Button>
           </form>
         </Form>
+        <div className="space-y-3">
+          <Button
+            className="w-full"
+            type="button"
+            variant="outline"
+            onClick={() => signIn('google', { callbackUrl: '/onboarding' })}
+          >
+            Continue with Google
+          </Button>
+          <Button
+            className="w-full"
+            type="button"
+            variant="outline"
+            onClick={() => signIn('github', { callbackUrl: '/onboarding' })}
+          >
+            Continue with GitHub
+          </Button>
+        </div>
         <div className="text-center mt-4">
           <p>
             Not a member yet?{' '}

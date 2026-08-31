@@ -21,6 +21,7 @@ import { useToast } from '@/components/ui/use-toast';
 import axios, { AxiosError } from 'axios';
 import { Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { signIn } from 'next-auth/react';
 import { signUpSchema } from '@/schemas/signUpSchema';
 
 export default function SignUpForm() {
@@ -174,6 +175,24 @@ export default function SignUpForm() {
           </form>
         </Form>
         <div className="text-center mt-4">
+          <div className="space-y-3 mb-4">
+            <Button
+              className="w-full"
+              type="button"
+              variant="outline"
+              onClick={() => signIn('google', { callbackUrl: '/onboarding' })}
+            >
+              Sign up with Google
+            </Button>
+            <Button
+              className="w-full"
+              type="button"
+              variant="outline"
+              onClick={() => signIn('github', { callbackUrl: '/onboarding' })}
+            >
+              Sign up with GitHub
+            </Button>
+          </div>
           <p>
             Already a member?{' '}
             <Link href="/sign-in" className="text-blue-600 hover:text-blue-800">
