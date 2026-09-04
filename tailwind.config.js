@@ -57,6 +57,14 @@ module.exports = {
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
       },
+      boxShadow: {
+        'glow-sm': '0 0 15px -3px rgba(99, 102, 241, 0.3)',
+        'glow': '0 0 25px -3px rgba(99, 102, 241, 0.4)',
+        'glow-lg': '0 0 40px -5px rgba(99, 102, 241, 0.5)',
+        'glow-emerald': '0 0 25px -3px rgba(16, 185, 129, 0.4)',
+        'depth': '0 20px 40px -15px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.08)',
+        'depth-hover': '0 30px 60px -15px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(99, 102, 241, 0.3)',
+      },
       keyframes: {
         "accordion-down": {
           from: { height: "0" },
@@ -66,10 +74,24 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px) rotateX(0deg)' },
+          '50%': { transform: 'translateY(-8px) rotateX(2deg)' },
+        },
+        shimmer: {
+          '100%': { transform: 'translateX(100%)' },
+        },
+        'pulse-glow': {
+          '0%, 100%': { opacity: '0.4' },
+          '50%': { opacity: '0.8' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        float: "float 6s ease-in-out infinite",
+        shimmer: "shimmer 2.5s infinite",
+        "pulse-glow": "pulse-glow 3s ease-in-out infinite",
       },
     },
   },

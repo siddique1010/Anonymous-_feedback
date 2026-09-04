@@ -74,3 +74,46 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer utilities {
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+  .perspective-2000 {
+    perspective: 2000px;
+  }
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+  .backface-hidden {
+    backface-visibility: hidden;
+  }
+  .glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+  .glass-card-hover {
+    transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  .glass-card-hover:hover {
+    transform: translateY(-5px) scale(1.01);
+    border-color: rgba(99, 102, 241, 0.4);
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 25px -5px rgba(99, 102, 241, 0.25);
+  }
+  .btn-3d {
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateZ(0);
+  }
+  .btn-3d:hover {
+    transform: translateY(-2px);
+  }
+  .btn-3d:active {
+    transform: translateY(1px) scale(0.97);
+  }
+  .bg-grid-white {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.12) 1px, transparent 1px);
+    background-size: 24px 24px;
+  }
+}
